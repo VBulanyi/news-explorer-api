@@ -8,7 +8,6 @@ const { NODE_ENV, JWT_SECRET } = process.env;
 
 //возвращает информацию о пользователе
 function getUserById(req, res, next) {
-  console.log(req.user._id)
   User.find({ _id: req.user._id }, {email:1, name:1})
     .then((user) => {
       if (!user.length > 0) {

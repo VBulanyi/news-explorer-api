@@ -23,8 +23,6 @@ function createArticle(req, res, next) {
 
 // Удаляет статью
 function deleteArticle(req, res, next) {
-  console.log(req.params.id)
-  console.log(req.user._id)
   Aritcle.findOneAndDelete({ _id: req.params.id, owner: req.user._id })
     .then((article) => {
       if (!article) {
