@@ -1,0 +1,38 @@
+{
+  "name": "news-explorer-api",
+  "version": "1.0.0",
+  "description": "api for news-explorer web application",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon app.js",
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VBulanyi/news-explorer-api.git"
+  },
+  "author": "Vladimir Bulanyi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/VBulanyi/news-explorer-api/issues"
+  },
+  "homepage": "https://github.com/VBulanyi/news-explorer-api#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "celebrate": "^10.1.0",
+    "cookie-parser": "^1.4.4",
+    "cookieparser": "^0.1.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-rate-limit": "^5.0.0",
+    "express-winston": "^4.0.1",
+    "helmet": "^3.21.2",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.7.11",
+    "validator": "^12.0.0",
+    "winston": "^3.2.1"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.4"
+  }
+}
