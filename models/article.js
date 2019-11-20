@@ -44,6 +44,6 @@ const articleShema = new mongoose.Schema({
     required: true,
     select: false,
   },
-})
+});
 
 module.exports = mongoose.model('article', articleShema);

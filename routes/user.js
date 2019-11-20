@@ -11,4 +11,3 @@ userRouter.get('/users/me', auth, getUserById);
 
 
 module.exports = userRouter;
-

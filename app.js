@@ -6,10 +6,13 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const path = require('path');
 const bodyParser = require('body-parser');
+
 const { PORT = 3000 } = process.env;
 const { celebrate, Joi } = require('celebrate');
 const { errors } = require('celebrate');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
+const { NotFoundError } = require('./errors/error-handler');
+const constants = require('./constants');
 
 const app = express();
 const router = require('./routes/router');
@@ -23,19 +26,19 @@ const limiter = rateLimit({
 
 app.use(bodyParser.json());
 app.use(helmet());
-app.use(limiter)
+app.use(limiter);
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-mongoose.connect('mongodb://localhost:27017/newsesplorerdb', {
+mongoose.connect(process.env.DB_HOST, {
   useNewUrlParser: true,
   useCreateIndex: true,
   useFindAndModify: false,
 });
 
 app.listen(PORT, () => {
-    console.log(`You listen potr ${PORT}`);
-  });
+  console.log(`You listen potr ${PORT}`);
+});
 
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -58,20 +61,24 @@ app.post('/signin', celebrate({
   }),
 }), signin);
 
+app.use('*', (req, res, next) => {
+  next(new NotFoundError(constants.NOT_FOUND_PAGE));
+});
+
 app.use(errorLogger);
 app.use(errors());
 
+// eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
   // если у ошибки нет статуса, выставляем 404
-  const { statusCode = 404, message } = err;
+  const { statusCode = 404, message = 'dd' } = err;
 
   res
     .status(statusCode)
     .send({
       // проверяем статус и выставляем сообщение в зависимости от него
       message: statusCode === 500
-        ? 'На сервере произошла ошибка'
+        ? constants.SERVER_ERROR
         : message,
     });
 });
-

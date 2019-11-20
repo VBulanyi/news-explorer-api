@@ -1,11 +1,12 @@
 const jwt = require('jsonwebtoken');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
+const constants = require('../constants');
 
 const handleAuthError = (res) => {
   res
     .status(401)
-    .send({ message: 'Необходима авторизация' });
+    .send({ message: constants.AUTHORISATION_NEEDED });
 };
 
 const extractBearerToken = (header) => header.replace('Bearer ', '');

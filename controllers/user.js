@@ -1,35 +1,40 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+const constants = require('../constants');
 
 const { BadRequestError, NotFoundError, ValidationError } = require('../errors/error-handler');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
-//возвращает информацию о пользователе
+// возвращает информацию о пользователе
 function getUserById(req, res, next) {
-  User.find({ _id: req.user._id }, {email:1, name:1})
+  User.find({ _id: req.user._id }, { _id: 0, __v: 0 })
     .then((user) => {
       if (!user.length > 0) {
-        throw new NotFoundError('Пользователь не зарегистрирован');
+        throw new NotFoundError(constants.USER_IS_NOT_AUTHORISED);
       }
       res.send({ data: user });
     })
     .catch(next);
 }
 
-//создаёт юзера
+// создаёт юзера
 function createUser(req, res, next) {
   const {
-    email, password, name
+    email, password, name,
   } = req.body;
   bcrypt.hash(password, 10)
-  .then((hash) => User.create({
-    email, password: hash, name,
-  }))
-  .then((user) => res.send({ data: user}))
-  .catch(() => { throw new BadRequestError('не верные данные'); } )
-  .catch(next);
+    .then((hash) => User.create({
+      email, password: hash, name,
+    }))
+    .then((user) => res.send({
+      _id: user._id,
+      email: user.email,
+      name: user.name,
+    }))
+    .catch(() => { throw new BadRequestError(constants.WRONG_DATA); })
+    .catch(next);
 }
 
 // Котроллер входа
@@ -38,7 +43,7 @@ function signin(req, res, next) {
   return User.findUserByCredentials(email, password)
     .then((user) => {
       if (!user) {
-        throw new ValidationError('Не верный логин или пароль');
+        throw new ValidationError(constants.WRONG_DATA_OR_PASSWORD);
       }
       const token = jwt.sign(
         { _id: user._id },
