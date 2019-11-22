@@ -4,4 +4,8 @@ const NotFoundError = require('./not-found-err');
 
 const ValidationError = require('./validation-err');
 
-module.exports = { BadRequestError, NotFoundError, ValidationError };
+const ServerError = require('./server-err');
+
+module.exports = {
+  BadRequestError, NotFoundError, ValidationError, ServerError,
+};

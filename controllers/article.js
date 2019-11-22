@@ -1,5 +1,7 @@
 const Aritcle = require('../models/article');
-const { BadRequestError, NotFoundError } = require('../errors/error-handler');
+const {
+  BadRequestError, NotFoundError, ValidationError, ServerError,
+} = require('../errors/error-handler');
 const constants = require('../constants');
 
 // Возвращает все статьи
@@ -26,13 +28,16 @@ function createArticle(req, res, next) {
     .catch(next);
 }
 
-// Удаляет статью
 function deleteArticle(req, res, next) {
-  Aritcle.findOneAndDelete({ _id: req.params.id, owner: req.user._id })
+  Aritcle.findById(req.params.id).select('+owner')
     .then((article) => {
-      if (!article) {
-        throw new NotFoundError(constants.NO_ARTICLE_OR_RIGTRS);
-      } else res.send({ data: article });
+      if (!article) throw new NotFoundError(constants.NO_ARTICLE);
+      if (JSON.stringify(article.owner) !== JSON.stringify(req.user._id)) {
+        throw new ValidationError(constants.NO_RIGHTS);
+      }
+      Aritcle.deleteOne(article)
+        .then(() => res.send(article))
+        .catch(() => { throw new ServerError(constants.DELETE_ERROR); });
     })
     .catch(next);
 }

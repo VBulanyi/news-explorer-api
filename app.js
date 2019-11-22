@@ -73,15 +73,6 @@ app.use(errors());
 
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
-  // если у ошибки нет статуса, выставляем 404
-  const { statusCode = 404, message } = err;
-
-  res
-    .status(statusCode)
-    .send({
-      // проверяем статус и выставляем сообщение в зависимости от него
-      message: statusCode === 500
-        ? constants.SERVER_ERROR
-        : message,
-    });
+  res.status(err.statusCode ? err.statusCode : 500)
+    .send({ message: err.message });
 });
