@@ -15,6 +15,7 @@ const { NotFoundError } = require('./errors/error-handler');
 const constants = require('./constants');
 
 const { NODE_ENV, DB_HOST } = process.env;
+const { DEV_DB_HOST } = require('./config');
 
 const app = express();
 const router = require('./routes/router');
@@ -32,7 +33,7 @@ app.use(limiter);
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-mongoose.connect(NODE_ENV === 'production' ? DB_HOST : 'mongodb://localhost:27017/newsesplorerdb', {
+mongoose.connect(NODE_ENV === 'production' ? DB_HOST : DEV_DB_HOST, {
   useNewUrlParser: true,
   useCreateIndex: true,
   useFindAndModify: false,

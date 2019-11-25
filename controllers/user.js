@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const constants = require('../constants');
+const { DEV_SECRET_KEY } = require('../config');
 
 const { BadRequestError, NotFoundError, ValidationError } = require('../errors/error-handler');
 
@@ -47,7 +48,7 @@ function signin(req, res, next) {
       }
       const token = jwt.sign(
         { _id: user._id },
-        NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', { expiresIn: '2 days' },
+        NODE_ENV === 'production' ? JWT_SECRET : DEV_SECRET_KEY, { expiresIn: '2 days' },
       );
       res.cookie('jwt', token, {
         maxAge: 3600000,
