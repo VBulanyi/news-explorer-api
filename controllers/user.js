@@ -22,9 +22,11 @@ function getUserById(req, res, next) {
 
 // создаёт юзера
 function createUser(req, res, next) {
+  if (Object.keys(req.body).length === 0) return res.status(400).send({ message: 'Тело запроса пустое' });
   const {
     email, password, name,
   } = req.body;
+  // console.log(req.body);
   bcrypt.hash(password, 10)
     .then((hash) => User.create({
       email, password: hash, name,
@@ -41,6 +43,7 @@ function createUser(req, res, next) {
 // Котроллер входа
 function signin(req, res, next) {
   const { email, password } = req.body;
+  // console.log(req.body);
   return User.findUserByCredentials(email, password)
     .then((user) => {
       if (!user) {
@@ -48,18 +51,29 @@ function signin(req, res, next) {
       }
       const token = jwt.sign(
         { _id: user._id },
-        NODE_ENV === 'production' ? JWT_SECRET : DEV_SECRET_KEY, { expiresIn: '2 days' },
+        NODE_ENV === 'production' ? JWT_SECRET : DEV_SECRET_KEY, { expiresIn: '2d' },
       );
       res.cookie('jwt', token, {
         maxAge: 3600000,
         httpOnly: true,
-        sameSite: true,
+        sameSite: false,
+      }).send({
+        name: user.name,
       })
-        .end();
     })
     .catch(next);
 }
 
+function logout(req, res, next) {
+  res
+    .status(201)
+    .cookie('jwt', '', {
+      maxAge: 0,
+      httpOnly: true,
+      sameSite: false,
+    }).send({ login: false });
+}
+
 module.exports = {
-  getUserById, createUser, signin,
+  getUserById, signin, createUser, logout,
 };
