@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
+const cors = require('cors')
 const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
@@ -17,10 +18,16 @@ const constants = require('./constants');
 const { NODE_ENV, DB_HOST } = process.env;
 const { DEV_DB_HOST } = require('./config');
 
-const app = express();
 const router = require('./routes/router');
+const { signin, createUser, logout } = require('./controllers/user');
 
-const { signin, createUser } = require('./controllers/user');
+const app = express();
+app.set('trust proxy', 1);
+app.use(cors(({
+  credentials: true,
+  origin: true,
+})));
+
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -52,9 +59,9 @@ app.use('/', router);
 
 app.post('/signup', celebrate({
   body: Joi.object().keys({
-    name: Joi.string().required().min(2).max(30),
-    email: Joi.string().required().email(),
     password: Joi.string().required(),
+    email: Joi.string().required().email(),
+    name: Joi.string().required().min(2).max(30),
   }),
 }), createUser);
 
@@ -64,6 +71,8 @@ app.post('/signin', celebrate({
     password: Joi.string().required(),
   }),
 }), signin);
+
+app.post('/logout', logout)
 
 app.use('*', (req, res, next) => {
   next(new NotFoundError(constants.NOT_FOUND_PAGE));
