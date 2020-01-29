@@ -6,7 +6,7 @@ const constants = require('../constants');
 
 // Возвращает все статьи
 function getAllArticles(req, res, next) {
-  Aritcle.find({})
+  Aritcle.find({ owner: req.user._id })
     .populate('user')
     .then((article) => {
       if (!article.length > 0) {
