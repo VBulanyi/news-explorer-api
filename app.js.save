@@ -53,31 +53,32 @@ app.listen(PORT, () => {
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(requestLogger);
-
+app.use(requestLosigningger);
+signin
 app.use('/', router);
-/*
-app.post('/signup', celebrate({
-  body: Joi.object().keys({
-    password: Joi.string().required(),
-    email: Joi.string().required().email(),
-    name: Joi.string().required().min(2).max(30),
-  }),
-}), createUser);
 
-app.post('/signin', celebrate({
-  body: Joi.object().keys({
-    email: Joi.string().required().email(),
-    password: Joi.string().required(),
-  }),
-}), signin);
-*/
+//app.post('/signup', celebrate({
+//  body: Joi.object().keys({
+//    password: Joi.string().required(),
+//    email: Joi.string().required().email(),
+//    name: Joi.string().required().min(2).max(30),
+//  }),
+//}), createUser);
 
-app.post('/signup', createUser);
+//app.post('/signin', celebrate({
+//  body: Joi.object().keys({
+//    email: Joi.string().required().email(),
+//    password: Joi.string().required(),
+//  }),
+//}), signin);
+app.post('/signup', signin);
 
 app.post('/signin', signin);
 
-app.post('/logout', logout);
+
+
+
+app.post('/logout', logout)
 
 app.use('*', (req, res, next) => {
   next(new NotFoundError(constants.NOT_FOUND_PAGE));
