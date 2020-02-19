@@ -26,7 +26,6 @@ function createUser(req, res, next) {
   const {
     email, password, name,
   } = req.body;
-  // console.log(req.body);
   bcrypt.hash(password, 10)
     .then((hash) => User.create({
       email, password: hash, name,
@@ -43,7 +42,6 @@ function createUser(req, res, next) {
 // Котроллер входа
 function signin(req, res, next) {
   const { email, password } = req.body;
-  // console.log(req.body);
   return User.findUserByCredentials(email, password)
     .then((user) => {
       if (!user) {
@@ -54,12 +52,14 @@ function signin(req, res, next) {
         NODE_ENV === 'production' ? JWT_SECRET : DEV_SECRET_KEY, { expiresIn: '2d' },
       );
       res.cookie('jwt', token, {
-        maxAge: 3600000,
+        maxAge: 360000000,
         httpOnly: true,
+        secure: true,
         sameSite: false,
       }).send({
         name: user.name,
-      })
+        isLogedIn: true,
+      });
     })
     .catch(next);
 }
@@ -70,8 +70,9 @@ function logout(req, res, next) {
     .cookie('jwt', '', {
       maxAge: 0,
       httpOnly: true,
+      secure: true,
       sameSite: false,
-    }).send({ login: false });
+    }).send({ isLogedIn: false });
 }
 
 module.exports = {
