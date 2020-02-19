@@ -1,7 +1,9 @@
+//my
+
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
-const cors = require('cors')
+const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
@@ -59,20 +61,20 @@ app.use('/', router);
 
 app.post('/signup', celebrate({
   body: Joi.object().keys({
-    password: Joi.string().required(),
-    email: Joi.string().required().email(),
-    name: Joi.string().required().min(2).max(30),
+    password: Joi.string().required().min(8),
+    email: Joi.string().email().required(),
+    name: Joi.string().min(2).max(30).required(),
   }),
 }), createUser);
 
 app.post('/signin', celebrate({
   body: Joi.object().keys({
-    email: Joi.string().required().email(),
-    password: Joi.string().required(),
+    password: Joi.string().required().min(8),
+    email: Joi.string().email().required(),
   }),
 }), signin);
 
-app.post('/logout', logout)
+app.post('/logout', logout);
 
 app.use('*', (req, res, next) => {
   next(new NotFoundError(constants.NOT_FOUND_PAGE));
