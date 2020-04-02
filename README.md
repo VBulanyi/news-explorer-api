@@ -1,29 +1,41 @@
 # news-explorer-api
 
-Study progect
+# Версия 1.0.0
 
-Version 1.0.0
+# О проекте
 
-About project
-
-back-end for News Explorer
+  back-end для проекта News Explorer
  
-Usage
+# Развёртывание
 
-run: npm run start
+  - обновить зависимости npm i
 
-run with hot-reload: npm run dev
+  - запуск: npm run start
 
+  - запус в режиме разработки с hot-reload: npm run dev
 
-Web access
+# Web access
 
-api.news2explorer.tk
+    api.news2explorer.tk
 
-API Methods
+# Реализовано:
 
-POST /signup
-POST /signin
-GET /users/me
-GET /articles
-POST /articles
-DELETE /articles/articleId
+    Все роуты, кроме /signin и /signup, защищены авторизацией
+    Ошибки API обрабатываются
+    пароль хранится в зашифрованном виде
+    API не возвращает хеш пароля клиенту
+    Данные валидируются перед добавлением в базу
+    Пользователь не может удалить сохранённую карточку из профиля другого пользователя
+    К серверу можно обратиться и по http, и по https, обращаясь к домену, указанному в README.md
+    для продакшн сборки он хранится в .env файле — этот файл не добавляется в git
+    в режиме разработки (при process.env.NODE_ENV !== 'production') код запускается и работает и без .env файла
+    Асинхронные операции реализованы промисами или async/await.
+
+# API
+
+    POST /signup - регистрация пользователя
+    POST /signin - авторизауия пользователя
+    GET /users/me - получение ID авторизированного пользователя
+    GET /articles - получить список сохранённых статей пользователя
+    POST /articles - сохранить статью пользователем
+    DELETE /articles/articleId - удалить из сохранённых статью пользователем по ID
